@@ -2,7 +2,8 @@
   <div class="dropdown" v-if="options">
     <!-- Dropdown Input with Search Icon -->
     <div class="input-wrapper">
-      <span class="search-icon"><FontAwesomeIcon :icon="faSearch()"/><i class="i-carbon-search"></i></span> <!-- You can replace this with an SVG or FontAwesome icon -->
+      <span class="search-icon"><FontAwesomeIcon :icon="faSearch()"/><i class="i-carbon-search"></i></span>
+      <!-- You can replace this with an SVG or FontAwesome icon -->
 
       <input
         class="dropdown-input"
@@ -32,8 +33,8 @@
 
 <script>
 import {library} from "@fortawesome/fontawesome-svg-core"
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faArrowDown, faArrowDown19, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faArrowDown, faSearch} from "@fortawesome/free-solid-svg-icons";
 
 library.add(faArrowDown, faSearch)
 
@@ -64,7 +65,7 @@ export default {
     maxItem: {
       type: Number,
       required: false,
-      default: 6,
+      default: 100,
     }
   },
   data() {
@@ -96,16 +97,13 @@ export default {
     faArrowDown() {
       return faArrowDown
     },
-    faArrowDown19() {
-      return faArrowDown19
-    },
     selectOption(option) {
       this.selected = option;
       this.optionsShown = false;
       this.searchFilter = this.selected.name;
       this.$emit('selected', this.selected);
     },
-    showOptions(){
+    showOptions() {
       if (!this.disabled) {
         this.searchFilter = '';
         this.optionsShown = true;
@@ -201,30 +199,30 @@ export default {
     margin-left: 5px;
     width: calc(100% - 10px);
     border: 1px solid #e7ecf5;
-    box-shadow: 0px -8px 34px rgba(0,0,0,0.05);
+    box-shadow: 0px -8px 34px rgba(0, 0, 0, 0.05);
     overflow-y: auto; /* Allow vertical scrolling */
     z-index: 1;
 
     .dropdown-item {
       color: black;
-      font-size:1em;
+      font-size: 1em;
 
-      line-height:.9em;
-      padding:.5em;
+      line-height: .9em;
+      padding: .5em;
       margin-top: .3em;
-      text-decoration:none;
-      display:block;
+      text-decoration: none;
+      display: block;
 
-      cursor:pointer;
+      cursor: pointer;
 
       &:hover {
-        background-color:#e7ecf5;
+        background-color: #e7ecf5;
       }
     }
   }
 
   .dropdown:hover .dropdown-content {
-    display:block;
+    display: block;
   }
 }
 </style>

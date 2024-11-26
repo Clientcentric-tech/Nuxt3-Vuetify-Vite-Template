@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue';
-import Dropdown from "@/components/icons/SearchableDropdown.vue";
+import Dropdown from "@/components/SearchableDropdown.vue";
 import { ref } from 'vue';
 
 // Define options as a reactive reference

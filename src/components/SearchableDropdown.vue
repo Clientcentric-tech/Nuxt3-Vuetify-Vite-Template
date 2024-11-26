@@ -2,7 +2,8 @@
   <div class="dropdown" v-if="options">
     <!-- Dropdown Input with Search Icon -->
     <div class="input-wrapper">
-      <span class="search-icon">🔍<i class="i-carbon-search"></i></span> <!-- You can replace this with an SVG or FontAwesome icon -->
+      <span class="search-icon"><FontAwesomeIcon :icon="faSearch()"/><i class="i-carbon-search"></i></span> <!-- You can replace this with an SVG or FontAwesome icon -->
+
       <input
         class="dropdown-input"
         :name="name"
@@ -13,6 +14,7 @@
         :disabled="disabled"
         :placeholder="placeholder"
       />
+      <span class="arrow-down-icon"><FontAwesomeIcon :icon="faArrowDown()" /> </span>
     </div>
 
     <!-- Dropdown Menu -->
@@ -29,8 +31,15 @@
 </template>
 
 <script>
+import {library} from "@fortawesome/fontawesome-svg-core"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faArrowDown, faArrowDown19, faSearch } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faArrowDown, faSearch)
+
 export default {
   name: 'Dropdown',
+  components: {FontAwesomeIcon},
   props: {
     name: {
       type: String,
@@ -81,6 +90,15 @@ export default {
     }
   },
   methods: {
+    faSearch() {
+      return faSearch
+    },
+    faArrowDown() {
+      return faArrowDown
+    },
+    faArrowDown19() {
+      return faArrowDown19
+    },
     selectOption(option) {
       this.selected = option;
       this.optionsShown = false;
@@ -133,7 +151,17 @@ export default {
 
     .search-icon {
       position: absolute;
+      font-size: 1.2em;
       left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .arrow-down-icon {
+      position: absolute;
+      font-size: 1.2em;
+      right: 3%;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
@@ -153,7 +181,7 @@ export default {
       width: 100%;
 
 
-      min-width: 250px;
+      /*min-width: 250px;*/
       /*max-width: 250px;*/
 
       &:hover {

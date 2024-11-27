@@ -11,7 +11,12 @@
     <div class="account-selector">
       <h2 class="account-title">Select account</h2>
       <p class="hint-title">Use the dropdown to select where you want to login.</p>
-      <CustomDropdown :options="new_options" />
+      <CustomDropdown
+        placeholder="Select Account"
+        v-model="selectedValue"
+        :options=new_options
+        :groupBy="(option) => option.group"
+      />
       <button class="button button-black">Open dashboard</button>
       <button class="button button-white">Connect account</button>
       <a href="#" class="link-platform">Select another platform</a>
@@ -21,50 +26,17 @@
 
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-import { ref } from 'vue'
 import CustomDropdown from '@/components/CustomDropdown.vue'
+import {ref} from "vue";
 
 const new_options = [
-  {
-    label: 'Select',
-    options: [{ label: 'Default items', value: 'default_items' }],
-  },
-  {
-    label: 'Development',
-    options: [
-      { label: 'Development', value: 'development' },
-      { label: 'Development (Cloud)', value: 'development_cloud' },
-    ],
-  },
-  {
-    label: 'Test',
-    options: [
-      { label: 'Pre-production', value: 'pre_production' },
-      { label: 'Pre-production (Test)', value: 'pre_production_test' },
-    ],
-  },
-  {
-    label: 'Production',
-    options: [
-      { label: 'Prod 1', value: 'prod_1' },
-      { label: 'Prod 2', value: 'prod_2' },
-    ],
-  },
+  { label: 'Option A', value: 'valA', group: 'Group A' },
+  { label: 'Option B', value: 'valB', group: 'Group B' },
+  { label: 'Option C', value: 'valC', group: 'Group A' }
 ]
 
-// Define selected as a reactive reference
-const selected = ref({ name: null, id: null })
+const selectedValue = ref(''); // To hold the selected option's value
 
-// Method to validate selection
-const validateSelection = (selection) => {
-  selected.value = selection
-  console.log(selection.name + ' has been selected')
-}
-
-// Method to filter dropdown values
-const getDropdownValues = (keyword) => {
-  console.log('You could refresh options by querying the API with ' + keyword)
-}
 </script>
 
 <style scoped>
@@ -80,6 +52,8 @@ header {
 .account-selector {
   align-content: center;
   justify-content: center;
+  max-width: 1024px;
+  margin: auto;
 }
 
 .account-title {
@@ -92,11 +66,11 @@ header {
 .button {
   display: block;
   margin: 10px auto;
-  width: 75%;
+  width: 50%;
   padding: 12px 0;
   font-size: 1em;
   border-radius: 10px;
-  border-color: #222222;
+  border: #222222 solid 2px;
   cursor: pointer;
 }
 
@@ -147,8 +121,4 @@ header {
   }
 }
 
-/* Optional: Add styles to ensure dropdown visibility */
-.SearchableDropdown {
-  margin-top: 20px; /* Ensure there's space for the dropdown */
-}
 </style>

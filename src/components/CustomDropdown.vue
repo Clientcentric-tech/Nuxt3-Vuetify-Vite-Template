@@ -15,41 +15,34 @@
       </svg>
       <input
         v-model="search"
-        @focus="(focused = true)"
-        @blur="(focused = false)"
+        @focus="focused = true"
+        @blur="focused = false"
         class="flex-1 outline-none mx-2 text-md"
         :placeholder="placeholder"
       />
 
-      <svg
-        class="transition-all"
-        :class="{ 'rotate-180': opened || focused }"
-        width="15px"
-        height="15px"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M4...Z" fill="#000000" />
+      <svg class="transition-all" :class="{ 'rotate-180': opened || focused }" width="15px" height="15px"
+           viewBox="0 0 24 24" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z"
+              fill="#000000"/>
       </svg>
     </div>
     <div
       v-if="opened || focused"
-      class="shadow rounded bg-white absolute top-full w-full mt-1 py-1 overflow-hidden"
+      class="shadow rounded bg-white absolute top-full w-full mt-1 py-1 overflow-hidden z-10"
     >
-      <template v-for="group in props.options">
+      <template v-for="(group, index) in filteredGroupedOptions">
         <!-- Displaying Group Label -->
-        <div class="font-bold px-4 py-2">{{ group.label }}</div>
-        <!-- Group label -->
+        <div v-if="group.options.length > 0" class="font-bold px-4 py-2">{{ group.label }}</div>
 
         <!-- Displaying filtered options -->
-        <div v-if="filteredOptions(group.options).length === 0" class="px-4 py-2 text-gray-400">
-          No items
-        </div>
+        <div v-if="group.options.length === 0" class="px-4 py-2 text-gray-400">No items</div>
 
         <div
-          v-for="option in filteredOptions(group.options)"
+          v-for="option in group.options"
           :key="option.value"
-          @click="handleSelect(option.value)"
+          @click.prevent="handleSelect(option)"
           class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
         >
           <span class="text-sm">{{ option.label }}</span>
@@ -60,7 +53,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import {ref, computed, watch} from 'vue';
+
 const props = defineProps({
   placeholder: String,
   modelValue: String,
@@ -68,70 +62,94 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-})
-const emit = defineEmits(['update:modelValue'])
+  groupBy: {
+    type: Function,
+    default: (option) => option.group
+  }
+});
+
+const emit = defineEmits(['update:modelValue']);
 
 const getOptionLabel = (val) => {
-  if (!val) return ''
-  return (
-    props.options.flatMap((group) => group.options).find((option) => option.value === val)?.label ||
-    ''
-  )
-}
+  if (!val) return '';
+  const foundOption = props.options.find((option) => option.value === val);
+  return foundOption ? foundOption.label : '';
+};
 
-const opened = ref(false)
-const focused = ref(false)
-const search = ref(getOptionLabel(props.modelValue))
-const containerRef = ref()
+const opened = ref(false);
+const focused = ref(false);
+const search = ref(getOptionLabel(props.modelValue));
 
 const value = computed({
   get: () => props.modelValue,
   set: (newVal) => {
-    emit('update:modelValue', newVal)
+    emit('update:modelValue', newVal);
   },
-})
+});
 
-// Function to filter options within a group based on search input
 const filteredOptions = (options) => {
-  return options.filter((option) => option.label.toLowerCase().includes(search.value.toLowerCase()))
-}
+  return options.filter((option) => option.label.toLowerCase().includes(search.value.toLowerCase()));
+};
+
+const filteredGroupedOptions = computed(() => {
+  const groups = {};
+
+  props.options.forEach(option => {
+    const groupLabel = props.groupBy(option);
+    if (!groups[groupLabel]) {
+      groups[groupLabel] = {label: groupLabel, options: []};
+    }
+    groups[groupLabel].options.push(option);
+  });
+
+  return Object.values(groups).map(group => ({
+    label: group.label,
+    options: filteredOptions(group.options),
+  })).filter(group => group.options.length > 0);
+});
 
 const toggleDropdown = () => {
-  opened.value = !opened.value
+  opened.value = !opened.value;
   if (!opened.value) {
-    search.value = getOptionLabel(value.value)
+    search.value = getOptionLabel(value.value);
   }
-}
+};
 
-const handleSelect = (val) => {
-  value.value = val
-  opened.value = false
-  focused.value = false
-  search.value = getOptionLabel(value.value)
-}
+const handleSelect = (option) => {
+  value.value = option.value;
+  search.value = option.label;
+  opened.value = false;
+};
 
 watch(value, (newVal) => {
-  search.value = getOptionLabel(newVal)
-})
+  search.value = getOptionLabel(newVal);
+});
 
 const clickOutside = (event) => {
-  if (!containerRef.value) return
-  if (!containerRef.value?.contains(event.target)) {
-    toggleDropdown()
+  if (!containerRef.value) return;
+  if (!containerRef.contains(event.target)) {
+    opened.value = false;
   }
-}
+};
 
 watch(focused, (newValue) => {
   if (!newValue && !opened.value) {
-    search.value = getOptionLabel(value.value)
+    search.value = getOptionLabel(value.value);
   }
-})
+});
 
 watch(opened, (newValue) => {
   if (newValue) {
-    document.addEventListener('click', clickOutside)
+    document.addEventListener('click', clickOutside);
   } else {
-    document.removeEventListener('click', clickOutside)
+    document.removeEventListener('click', clickOutside);
   }
-})
+});
 </script>
+
+<style scoped>
+.relative {
+  width: 50%;
+  margin: auto;
+}
+</style>

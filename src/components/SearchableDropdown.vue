@@ -2,7 +2,9 @@
   <div class="dropdown" v-if="options">
     <!-- Dropdown Input with Search Icon -->
     <div class="input-wrapper">
-      <span class="search-icon"><FontAwesomeIcon :icon="faSearch()"/><i class="i-carbon-search"></i></span>
+      <span class="search-icon"
+        ><FontAwesomeIcon :icon="faSearch()" /><i class="i-carbon-search"></i
+      ></span>
       <!-- You can replace this with an SVG or FontAwesome icon -->
 
       <input
@@ -24,7 +26,8 @@
         class="dropdown-item"
         @mousedown="selectOption(option)"
         v-for="(option, index) in filteredOptions"
-        :key="index">
+        :key="index"
+      >
         {{ option.name || option.id || '-' }}
       </div>
     </div>
@@ -32,15 +35,15 @@
 </template>
 
 <script>
-import {library} from "@fortawesome/fontawesome-svg-core"
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faArrowDown, faSearch} from "@fortawesome/free-solid-svg-icons";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faArrowDown, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faArrowDown, faSearch)
 
 export default {
   name: 'Dropdown',
-  components: {FontAwesomeIcon},
+  components: { FontAwesomeIcon },
   props: {
     name: {
       type: String,
@@ -66,29 +69,29 @@ export default {
       type: Number,
       required: false,
       default: 100,
-    }
+    },
   },
   data() {
     return {
       selected: {},
       optionsShown: false,
-      searchFilter: ''
+      searchFilter: '',
     }
   },
   created() {
-    this.$emit('selected', this.selected);
+    this.$emit('selected', this.selected)
   },
   computed: {
     filteredOptions() {
-      const filtered = [];
-      const regOption = new RegExp(this.searchFilter, 'ig');
+      const filtered = []
+      const regOption = new RegExp(this.searchFilter, 'ig')
       for (const option of this.options) {
-        if (this.searchFilter.length < 1 || option.name.match(regOption)){
-          if (filtered.length < this.maxItem) filtered.push(option);
+        if (this.searchFilter.length < 1 || option.name.match(regOption)) {
+          if (filtered.length < this.maxItem) filtered.push(option)
         }
       }
-      return filtered;
-    }
+      return filtered
+    },
   },
   methods: {
     faSearch() {
@@ -98,43 +101,43 @@ export default {
       return faArrowDown
     },
     selectOption(option) {
-      this.selected = option;
-      this.optionsShown = false;
-      this.searchFilter = this.selected.name;
-      this.$emit('selected', this.selected);
+      this.selected = option
+      this.optionsShown = false
+      this.searchFilter = this.selected.name
+      this.$emit('selected', this.selected)
     },
     showOptions() {
       if (!this.disabled) {
-        this.searchFilter = '';
-        this.optionsShown = true;
+        this.searchFilter = ''
+        this.optionsShown = true
       }
     },
     exit() {
       if (!this.selected.id) {
-        this.selected = {};
-        this.searchFilter = '';
+        this.selected = {}
+        this.searchFilter = ''
       } else {
-        this.searchFilter = this.selected.name;
+        this.searchFilter = this.selected.name
       }
-      this.$emit('selected', this.selected);
-      this.optionsShown = false;
+      this.$emit('selected', this.selected)
+      this.optionsShown = false
     },
     keyMonitor(event) {
-      if (event.key === "Enter" && this.filteredOptions[0])
-        this.selectOption(this.filteredOptions[0]);
-    }
+      if (event.key === 'Enter' && this.filteredOptions[0])
+        this.selectOption(this.filteredOptions[0])
+    },
   },
   watch: {
     searchFilter() {
       if (this.filteredOptions.length === 0) {
-        this.selected = {};
+        this.selected = {}
       } else {
-        this.selected = this.filteredOptions[0];
+        this.selected = this.filteredOptions[0]
       }
-      this.$emit('filter', this.searchFilter);
-    }
-  }
-};
+      this.$emit('filter', this.searchFilter)
+    },
+  },
+}
 </script>
 
 <style scoped>
@@ -178,7 +181,6 @@ export default {
       border-radius: 10px;
       width: 100%;
 
-
       /*min-width: 250px;*/
       /*max-width: 250px;*/
 
@@ -207,9 +209,9 @@ export default {
       color: black;
       font-size: 1em;
 
-      line-height: .9em;
-      padding: .5em;
-      margin-top: .3em;
+      line-height: 0.9em;
+      padding: 0.5em;
+      margin-top: 0.3em;
       text-decoration: none;
       display: block;
 

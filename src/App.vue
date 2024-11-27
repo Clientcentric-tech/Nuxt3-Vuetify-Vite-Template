@@ -11,13 +11,7 @@
     <div class="account-selector">
       <h2 class="account-title">Select account</h2>
       <p class="hint-title">Use the dropdown to select where you want to login.</p>
-      <Dropdown
-        :options="options"
-        @selected="validateSelection"
-        @filter="getDropdownValues"
-        :disabled="false"
-        placeholder="Select account"
-      />
+      <CustomDropdown :options="new_options" />
       <button class="button button-black">Open dashboard</button>
       <button class="button button-white">Connect account</button>
       <a href="#" class="link-platform">Select another platform</a>
@@ -26,34 +20,51 @@
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
-import Dropdown from "@/components/SearchableDropdown.vue";
-import { ref } from 'vue';
+import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+import CustomDropdown from '@/components/CustomDropdown.vue'
 
-// Define options as a reactive reference
-const options = ref([
-  { name: 'jack', id: '1' },
-  { name: 'kevin', id: '2' },
-  { name: 'austin', id: '3' },
-  { name: 'jemma', id: '4' }, // Corrected typo here
-  { name: 'tomas', id: '5' },
-  { name: 'ewan', id: '6' },
-  { name: 'anna', id: '7' }
-]);
+const new_options = [
+  {
+    label: 'Select',
+    options: [{ label: 'Default items', value: 'default_items' }],
+  },
+  {
+    label: 'Development',
+    options: [
+      { label: 'Development', value: 'development' },
+      { label: 'Development (Cloud)', value: 'development_cloud' },
+    ],
+  },
+  {
+    label: 'Test',
+    options: [
+      { label: 'Pre-production', value: 'pre_production' },
+      { label: 'Pre-production (Test)', value: 'pre_production_test' },
+    ],
+  },
+  {
+    label: 'Production',
+    options: [
+      { label: 'Prod 1', value: 'prod_1' },
+      { label: 'Prod 2', value: 'prod_2' },
+    ],
+  },
+]
 
 // Define selected as a reactive reference
-const selected = ref({ name: null, id: null });
+const selected = ref({ name: null, id: null })
 
 // Method to validate selection
 const validateSelection = (selection) => {
-  selected.value = selection;
-  console.log(selection.name + ' has been selected');
-};
+  selected.value = selection
+  console.log(selection.name + ' has been selected')
+}
 
 // Method to filter dropdown values
 const getDropdownValues = (keyword) => {
-  console.log('You could refresh options by querying the API with ' + keyword);
-};
+  console.log('You could refresh options by querying the API with ' + keyword)
+}
 </script>
 
 <style scoped>

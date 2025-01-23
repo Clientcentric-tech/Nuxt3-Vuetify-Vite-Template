@@ -2,7 +2,11 @@
   <div class="dropdown" v-if="options">
     <!-- Dropdown Input with Search Icon -->
     <div class="input-wrapper">
-      <span class="search-icon">🔍<i class="i-carbon-search"></i></span> <!-- You can replace this with an SVG or FontAwesome icon -->
+      <span class="search-icon"
+        ><FontAwesomeIcon :icon="faSearch()" /><i class="i-carbon-search"></i
+      ></span>
+      <!-- You can replace this with an SVG or FontAwesome icon -->
+
       <input
         class="dropdown-input"
         :name="name"
@@ -13,6 +17,7 @@
         :disabled="disabled"
         :placeholder="placeholder"
       />
+      <span class="arrow-down-icon"><FontAwesomeIcon :icon="faArrowDown()" /> </span>
     </div>
 
     <!-- Dropdown Menu -->
@@ -21,7 +26,8 @@
         class="dropdown-item"
         @mousedown="selectOption(option)"
         v-for="(option, index) in filteredOptions"
-        :key="index">
+        :key="index"
+      >
         {{ option.name || option.id || '-' }}
       </div>
     </div>
@@ -29,8 +35,15 @@
 </template>
 
 <script>
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faArrowDown, faSearch } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faArrowDown, faSearch)
+
 export default {
   name: 'Dropdown',
+  components: { FontAwesomeIcon },
   props: {
     name: {
       type: String,
@@ -55,70 +68,76 @@ export default {
     maxItem: {
       type: Number,
       required: false,
-      default: 6,
-    }
+      default: 100,
+    },
   },
   data() {
     return {
       selected: {},
       optionsShown: false,
-      searchFilter: ''
+      searchFilter: '',
     }
   },
   created() {
-    this.$emit('selected', this.selected);
+    this.$emit('selected', this.selected)
   },
   computed: {
     filteredOptions() {
-      const filtered = [];
-      const regOption = new RegExp(this.searchFilter, 'ig');
+      const filtered = []
+      const regOption = new RegExp(this.searchFilter, 'ig')
       for (const option of this.options) {
-        if (this.searchFilter.length < 1 || option.name.match(regOption)){
-          if (filtered.length < this.maxItem) filtered.push(option);
+        if (this.searchFilter.length < 1 || option.name.match(regOption)) {
+          if (filtered.length < this.maxItem) filtered.push(option)
         }
       }
-      return filtered;
-    }
+      return filtered
+    },
   },
   methods: {
-    selectOption(option) {
-      this.selected = option;
-      this.optionsShown = false;
-      this.searchFilter = this.selected.name;
-      this.$emit('selected', this.selected);
+    faSearch() {
+      return faSearch
     },
-    showOptions(){
+    faArrowDown() {
+      return faArrowDown
+    },
+    selectOption(option) {
+      this.selected = option
+      this.optionsShown = false
+      this.searchFilter = this.selected.name
+      this.$emit('selected', this.selected)
+    },
+    showOptions() {
       if (!this.disabled) {
-        this.searchFilter = '';
-        this.optionsShown = true;
+        this.searchFilter = ''
+        this.optionsShown = true
       }
     },
     exit() {
       if (!this.selected.id) {
-        this.selected = {};
-        this.searchFilter = '';
+        this.selected = {}
+        this.searchFilter = ''
       } else {
-        this.searchFilter = this.selected.name;
+        this.searchFilter = this.selected.name
       }
-      this.$emit('selected', this.selected);
-      this.optionsShown = false;
+      this.$emit('selected', this.selected)
+      this.optionsShown = false
     },
     keyMonitor(event) {
-      if (event.key === "Enter" && this.filteredOptions[0])
-        this.selectOption(this.filteredOptions[0]);
-    }
+      if (event.key === 'Enter' && this.filteredOptions[0])
+        this.selectOption(this.filteredOptions[0])
+    },
   },
   watch: {
     searchFilter() {
       if (this.filteredOptions.length === 0) {
-        this.selected = {};
+        this.selected = {}
       } else {
-        this.selected = this.filteredOptions[0];
+        this.selected = this.filteredOptions[0]
       }
-      this.$emit('filter', this.searchFilter);
-    }
-  }
-};
+      this.$emit('filter', this.searchFilter)
+    },
+  },
+}
 </script>
 
 <style scoped>
@@ -133,7 +152,17 @@ export default {
 
     .search-icon {
       position: absolute;
+      font-size: 1.2em;
       left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .arrow-down-icon {
+      position: absolute;
+      font-size: 1.2em;
+      right: 3%;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
@@ -152,8 +181,7 @@ export default {
       border-radius: 10px;
       width: 100%;
 
-
-      min-width: 250px;
+      /*min-width: 250px;*/
       /*max-width: 250px;*/
 
       &:hover {
@@ -173,30 +201,30 @@ export default {
     margin-left: 5px;
     width: calc(100% - 10px);
     border: 1px solid #e7ecf5;
-    box-shadow: 0px -8px 34px rgba(0,0,0,0.05);
+    box-shadow: 0px -8px 34px rgba(0, 0, 0, 0.05);
     overflow-y: auto; /* Allow vertical scrolling */
     z-index: 1;
 
     .dropdown-item {
       color: black;
-      font-size:1em;
+      font-size: 1em;
 
-      line-height:.9em;
-      padding:.5em;
-      margin-top: .3em;
-      text-decoration:none;
-      display:block;
+      line-height: 0.9em;
+      padding: 0.5em;
+      margin-top: 0.3em;
+      text-decoration: none;
+      display: block;
 
-      cursor:pointer;
+      cursor: pointer;
 
       &:hover {
-        background-color:#e7ecf5;
+        background-color: #e7ecf5;
       }
     }
   }
 
   .dropdown:hover .dropdown-content {
-    display:block;
+    display: block;
   }
 }
 </style>

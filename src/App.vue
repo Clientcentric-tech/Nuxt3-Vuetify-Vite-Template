@@ -11,12 +11,11 @@
     <div class="account-selector">
       <h2 class="account-title">Select account</h2>
       <p class="hint-title">Use the dropdown to select where you want to login.</p>
-      <Dropdown
-        :options="options"
-        @selected="validateSelection"
-        @filter="getDropdownValues"
-        :disabled="false"
-        placeholder="Select account"
+      <CustomDropdown
+        placeholder="Select Account"
+        v-model="selectedValue"
+        :options=new_options
+        :groupBy="(option) => option.group"
       />
       <button class="button button-black">Open dashboard</button>
       <button class="button button-white">Connect account</button>
@@ -26,34 +25,18 @@
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
-import Dropdown from "@/components/icons/SearchableDropdown.vue";
-import { ref } from 'vue';
+import HelloWorld from './components/HelloWorld.vue'
+import CustomDropdown from '@/components/CustomDropdown.vue'
+import {ref} from "vue";
 
-// Define options as a reactive reference
-const options = ref([
-  { name: 'jack', id: '1' },
-  { name: 'kevin', id: '2' },
-  { name: 'austin', id: '3' },
-  { name: 'jemma', id: '4' }, // Corrected typo here
-  { name: 'tomas', id: '5' },
-  { name: 'ewan', id: '6' },
-  { name: 'anna', id: '7' }
-]);
+const new_options = [
+  { label: 'Option A', value: 'valA', group: 'Group A' },
+  { label: 'Option B', value: 'valB', group: 'Group B' },
+  { label: 'Option C', value: 'valC', group: 'Group A' }
+]
 
-// Define selected as a reactive reference
-const selected = ref({ name: null, id: null });
+const selectedValue = ref(''); // To hold the selected option's value
 
-// Method to validate selection
-const validateSelection = (selection) => {
-  selected.value = selection;
-  console.log(selection.name + ' has been selected');
-};
-
-// Method to filter dropdown values
-const getDropdownValues = (keyword) => {
-  console.log('You could refresh options by querying the API with ' + keyword);
-};
 </script>
 
 <style scoped>
@@ -69,6 +52,8 @@ header {
 .account-selector {
   align-content: center;
   justify-content: center;
+  max-width: 1024px;
+  margin: auto;
 }
 
 .account-title {
@@ -81,11 +66,11 @@ header {
 .button {
   display: block;
   margin: 10px auto;
-  width: 75%;
+  width: 50%;
   padding: 12px 0;
   font-size: 1em;
   border-radius: 10px;
-  border-color: #222222;
+  border: #222222 solid 2px;
   cursor: pointer;
 }
 
@@ -136,8 +121,4 @@ header {
   }
 }
 
-/* Optional: Add styles to ensure dropdown visibility */
-.SearchableDropdown {
-  margin-top: 20px; /* Ensure there's space for the dropdown */
-}
 </style>
